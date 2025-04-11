@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Support Ticket System' %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'discord': '#7289da',
+                        'discord-dark': '#5865F2',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        // Dark mode toggle
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('darkMode', html.classList.contains('dark'));
+        }
+
+        // Initialize dark mode based on user preference
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.documentElement.classList.add('dark');
+            }
+        });
+    </script>
+    <style>
+        .bg-discord-gradient {
+            background: linear-gradient(45deg, #7289da, #5865F2);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 font-sans">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="/" class="text-2xl font-bold text-gray-800">
+                            <i class="fas fa-ticket-alt text-discord"></i> Support
+                        </a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="/" class="inline-flex items-center px-1 pt-1 text-gray-700">Home</a>
+                        <% if (locals.isAuthenticated) { %>
+                            <a href="/dashboard" class="inline-flex items-center px-1 pt-1 text-gray-700">Dashboard</a>
+                            <% if (locals.isStaff) { %>
+                                <a href="/staff/dashboard" class="inline-flex items-center px-1 pt-1 text-gray-700">Staff Panel</a>
+                            <% } %>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    <% if (locals.isAuthenticated && locals.user) { %>
+                        <div class="ml-3 relative group">
+                            <div class="flex items-center">
+                                <img class="h-8 w-8 rounded-full" 
+                                     src="<%= user.avatar ? `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.png` : '/images/default-avatar.png' %>" 
+                                     alt="Profile">
+                                <span class="ml-2 text-gray-700"><%= user.username %></span>
+                                <a href="/auth/logout" class="ml-4 text-gray-600 hover:text-gray-900">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a>
+                                <button onclick="toggleDarkMode()" class="ml-4 text-gray-600 hover:text-gray-900">
+                                    <i class="fas fa-moon"></i> Toggle Dark Mode
+                                </button>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <a href="/auth/discord" 
+                           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-discord hover:bg-discord-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-discord">
+                            <i class="fab fa-discord mr-2"></i> Login with Discord
+                        </a>
+                    <% } %>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="flex items-center sm:hidden">
+                    <button type="button" class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-discord">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div class="sm:hidden hidden mobile-menu">
+            <div class="pt-2 pb-3 space-y-1">
+                <a href="/" class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700">Home</a>
+                <% if (locals.isAuthenticated) { %>
+                    <a href="/dashboard" class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700">Dashboard</a>
+                    <% if (locals.isStaff) { %>
+                        <a href="/staff/dashboard" class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700">Staff Panel</a>
+                    <% } %>
+                    <a href="/auth/logout" class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700">Logout</a>
+                <% } else { %>
+                    <a href="/auth/discord" class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700">
+                        <i class="fab fa-discord mr-2"></i> Login with Discord
+                    </a>
+                <% } %> else
+                <% if (locals.isAdmin) { %>
+                    <a href="/staff/admin-dashboard" class="inline-flex items-center px-1 pt-1 text-gray-700">Admin Panel</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+</body>
+</html>
